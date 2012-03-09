@@ -23,17 +23,29 @@ class EventManager
     # print them
 
     @file.each do |line|
-      # first_name = line[2]
-      # last_name = line[3]
-      puts [line[:first_name], line[:last_name]].join(" ")
-      
+
       #prints every line
       #line.inspect
-
+      
+      puts [line[:first_name], line[:last_name]].join(" ")
     end  
-  end  
+  end
+
+  def print_numbers
+    puts "printing your numbers"
+
+    #for each attendee
+    # get the number
+    #fix it
+    # print it
+
+    @file.each do |line|
+      phone_number = line[:homephone]
+    end  
+  end 
+   
 end
 
 # Script
 em = EventManager.new
-em.print_names
+em.print_numbers
