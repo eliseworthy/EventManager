@@ -31,19 +31,32 @@ class EventManager
     end  
   end
 
+  def clean_phone_number(phone_number)
+    #phone_number = phone_number.delete(" ,().-")
+    phone_number = phone_number.scan(/\d/).join
+
+    if phone_number.length == 10
+      phone_number
+    elsif phone_number.length == 11 && phone_number.start_with?("1")
+      phone_number[1..-1]
+    else
+      "0"*10
+    end
+  end  
+
   def print_numbers
     puts "printing your numbers"
-
-    #for each attendee
-    # get the number
-    #fix it
-    # print it
-
+    
     @file.each do |line|
-      phone_number = line[:homephone]
+      puts clean_phone_number(line[:homephone])
     end  
   end 
-   
+
+  def print_names_with_numbers
+    @file.each do |line|     
+      puts [line[:first_name], line[:last_name], clean_phone_number(line[:homephone])].join(" ")
+    end  
+  end   
 end
 
 # Script
