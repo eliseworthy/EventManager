@@ -4,6 +4,7 @@ require 'csv'
 # Class Definition
 
 class EventManager
+  INVALID_ZIP = "00000"
   def initialize
     puts "EventManager Initialized!"
 
@@ -65,7 +66,7 @@ class EventManager
      #else less than 5 digits
        #add zeros to the front until 5 digits
     if zip.nil?
-      zip = "00000"  
+      zip = INVALID_ZIP  
     else 
       while zip.length < 5
         zip = '0' + zip
