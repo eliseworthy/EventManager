@@ -56,9 +56,34 @@ class EventManager
     @file.each do |line|     
       puts [line[:first_name], line[:last_name], clean_phone_number(line[:homephone])].join(" ")
     end  
-  end   
+  end 
+
+  def clean_zip(zip)
+    #read the zip
+     #if five digits
+       #print zip
+     #else less than 5 digits
+       #add zeros to the front until 5 digits
+    if zip.nil?
+      zip = "00000"  
+    else 
+      while zip.length < 5
+        zip = '0' + zip
+      end 
+    end     
+    zip
+  end  
+
+  def print_zips
+    puts "printing the zips"
+    
+    @file.each do |line|
+      puts clean_zip(line[:zipcode])
+    end  
+  end 
+
 end
 
 # Script
 em = EventManager.new
-em.print_numbers
+em.print_zips
