@@ -165,14 +165,57 @@ class EventManager
       # end  
       state_data[state] ||= 0
       state_data[state] += 1
-
     end
+    state_data
+  end
+
+  def state_stats_by_state
+    state_data = state_stats
     puts state_data.inspect
-    puts state_data.size
-  end  
+    # I don't understand how this works. It came from SO 
+    # because the code from the tutorial didn't work.
+    state_data = state_data.sort_by{|state_abbr, counter| state_abbr.nil? ? "ZZ" :state_abbr }
+    state_data.each do |state_abbr,counter|
+      puts "#{state_abbr}: #{counter}"
+    end
+  end
+
+  def state_stats_by_count
+    # state_data = {}
+    # @file.each do |line|
+    #   state = line[:state]
+
+    #   # below produces the same result as
+    #   # if state_data[state].nil?
+    #   #   state_data[state] = 1
+    #   # else
+    #   #   state_data[state] += 1 
+    #   # end  
+    #   state_data[state] ||= 0
+    #   state_data[state] += 1
+    # end
+
+    state_data = state_stats
+
+    state_data = state_data.sort_by{|state_abbr, counter| counter }.reverse
+    state_data.each do |state_abbr,counter|
+      puts "#{state_abbr}: #{counter}"
+    end  
+  end 
+
+  def alpha_with_rank
+    state_data = state_stats
+
+    ranks = state_data.sort_by{|state_abbr, counter| counter}.collect{|state_abbr, counter| state_abbr}
+    state_data = state_data.sort_by{|state_abbr, counter| state_abbr.nil? ? "ZZ" :state_abbr }
+
+    state_data.each do |state_abbr, counter|
+      puts "#{state_abbr}:\t#{counter}\t(#{ranks.index(state_abbr) + 1})"
+    end
+  end
 end
 
 # Script
-em = EventManager.new("event_attendees.csv")
+em = EventManager.new("cleaned_attendees.csv")
 #em.output_data("cleaned_attendees.csv")
-em.state_stats
+em.alpha_with_rank
