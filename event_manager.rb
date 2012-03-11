@@ -72,13 +72,13 @@ class EventManager
      #else less than 5 digits
        #add zeros to the front until 5 digits
     if zip.nil?
-      zip = INVALID_ZIP  
+      INVALID_ZIP  
     else 
       while zip.length < 5
         zip = '0' + zip
       end 
+      zip
     end     
-    zip
   end  
 
   def print_zips
@@ -139,9 +139,21 @@ class EventManager
       output.write(custom_letter)
     end
   end 
+
+  def rank_times
+    hours = Array.new(24){0}
+    @file.each do |line|
+      time = line[:regdate].split(" ")
+      hour = time[1].split(":")
+      hour = hour[0]
+      # below does the same as hours[hour.to_i] = hours[hour.to_i] + 1
+      hours[hour.to_i] += 1
+    end
+    hours.each_with_index{|counter,hour| puts "#{hour}\t#{counter}"}
+  end 
 end
 
 # Script
 em = EventManager.new("event_attendees.csv")
 #em.output_data("cleaned_attendees.csv")
-em.create_form_letters
+em.rank_times
