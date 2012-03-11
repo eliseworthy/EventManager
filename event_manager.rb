@@ -1,16 +1,22 @@
 # Dependencies
 require 'csv'
+require 'sunlight'
 
 # Class Definition
 
 class EventManager
   INVALID_ZIP = "00000"
-  def initialize
+  INVALID_PHONE = "0"*10
+
+  Sunlight::Base.api_key = "e179a6973728c4dd3fb1204283aaccb5"
+
+
+  def initialize(filename)
     puts "EventManager Initialized!"
 
     # header converter is used because all keys were strings. This makes them symbols
     # and lowercases them all
-    @file = CSV.open('event_attendees.csv', :headers => true, :header_converters => :symbol)
+    @file = CSV.open(filename, :headers => true, :header_converters => :symbol)
     # @file.each do |line|
     #   puts line.inspect
     # end
@@ -41,7 +47,7 @@ class EventManager
     elsif phone_number.length == 11 && phone_number.start_with?("1")
       phone_number[1..-1]
     else
-      "0"*10
+      INVALID_PHONE
     end
   end  
 
@@ -83,8 +89,59 @@ class EventManager
     end  
   end 
 
+  def output_data(filename)
+    output = CSV.open(filename, "w")
+    @file.each do |line|
+     
+     # I don't think adding headers works
+      if @file.lineno == 2
+        output << line.headers
+      else  
+      end  
+    line[:homephone] = clean_phone_number(line[:homephone])
+    line[:zipcode] = clean_zip(line[:zipcode])
+    output << line  
+    end
+  end 
+   
+  # def rep_lookup
+  #   20.times do
+  #     line = @file.readline
+
+  #     representatives = Sunlight::Legislator.all_in_zipcode(clean_zip(line[:zipcode]))
+  #     #api lookup goes here
+  #     rep_names = representatives.collect do |rep|
+  #       title = rep.title
+  #       first_name = rep.firstname
+  #       first_initial = first_name[0]
+  #       last_name = rep.lastname
+  #       party = rep.party
+  #       title + " " + first_initial + ". " + last_name + " (" + party + ")"
+  #     end  
+  #      puts "#{line[:last_name]}, #{line[:first_name]}, #{line[:zipcode]}, #{rep_names.join(", ")}"
+  #   end
+  # end  
+
+  def create_form_letters
+   letter = File.open("form_letter.html", "r").read
+    20.times do
+      line = @file.readline
+
+      custom_letter = letter.gsub("#first_name", line[:first_name])
+      custom_letter = custom_letter.gsub("#last_name", line[:last_name])
+      custom_letter = custom_letter.gsub("#street", line[:street])
+      custom_letter = custom_letter.gsub("#city", line[:city])
+      custom_letter = custom_letter.gsub("#state", line[:state])
+      custom_letter = custom_letter.gsub("#zipcode", clean_zip(line[:zipcode]))
+
+      filename = "output/thanks_#{line[:last_name]}_#{line[:first_name]}.html"
+      output = File.new(filename, "w")
+      output.write(custom_letter)
+    end
+  end 
 end
 
 # Script
-em = EventManager.new
-em.print_zips
+em = EventManager.new("event_attendees.csv")
+#em.output_data("cleaned_attendees.csv")
+em.create_form_letters
