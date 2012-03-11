@@ -151,9 +151,28 @@ class EventManager
     end
     hours.each_with_index{|counter,hour| puts "#{hour}\t#{counter}"}
   end 
+
+  def state_stats
+    state_data = {}
+    @file.each do |line|
+      state = line[:state]
+
+      # below produces the same result as
+      # if state_data[state].nil?
+      #   state_data[state] = 1
+      # else
+      #   state_data[state] += 1 
+      # end  
+      state_data[state] ||= 0
+      state_data[state] += 1
+
+    end
+    puts state_data.inspect
+    puts state_data.size
+  end  
 end
 
 # Script
 em = EventManager.new("event_attendees.csv")
 #em.output_data("cleaned_attendees.csv")
-em.rank_times
+em.state_stats
