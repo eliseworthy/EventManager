@@ -8,6 +8,7 @@ require 'attendee'
 # Class Definition
 
 class EventManager
+  CSV_OPTIONS = {:headers => true, :header_converters => :symbol}
   INVALID_ZIP = "00000"
   INVALID_PHONE = "0"*10
 
@@ -15,12 +16,11 @@ class EventManager
 
   attr_accessor :attendees
 
-  def initialize(filename)
+  def initialize(filename, options = CSV_OPTIONS)
     puts "EventManager Initialized!"
 
     # header converter is used because all keys were strings. This makes them symbols
     # and lowercases them all
-    options = {:headers => true, :header_converters => :symbol}
     file = CSV.open(filename, options)
     # @file.each do |line|
     #   puts line.inspect
@@ -40,13 +40,6 @@ class EventManager
   #   # same as above
   #   # @file.each(&block)
   # end 
-
-  def load_attendees(file)
-    file.rewind
-    # self represents the object we're inside 
-    # we need to load attendees on an instance of event_manager
-    self.attendees = file.collect { |line| Attendee.new(line) }
-  end
 
   def print_names
     puts "Printing First and Last Names"
@@ -237,6 +230,16 @@ class EventManager
       puts "#{state_abbr}:\t#{counter}\t(#{ranks.index(state_abbr) + 1})"
     end
   end
+end
+
+private
+#implementation methods below
+  
+def load_attendees(file)
+  file.rewind
+  # self represents the object we're inside 
+  # we need to load attendees on an instance of event_manager
+  self.attendees = file.collect { |line| Attendee.new(line) }
 end
 
 # Script
