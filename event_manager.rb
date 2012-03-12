@@ -24,10 +24,10 @@ class EventManager
   end 
 
   def attendees(&block)
+    @file.rewind
     @file.each do |line|
       block.call(line)
     end
-
     # same as above
     # @file.each(&block)
   end 
@@ -62,8 +62,8 @@ class EventManager
   def print_numbers
     puts "printing your numbers"
     
-    @file.each do |line|
-      puts clean_phone_number(line[:homephone])
+    attendees do |attendee|
+      puts clean_phone_number(attendee[:homephone])
     end  
   end 
 
@@ -226,4 +226,7 @@ end
 # Script
 em = EventManager.new("cleaned_attendees.csv")
 #em.output_data("cleaned_attendees.csv")
-em.alpha_with_rank
+em.print_numbers
+#you can only run this once without @file.rewind since it goes through 
+#all the elements, so there are no new elements to run through, 
+em.print_names
