@@ -16,11 +16,21 @@ class EventManager
 
     # header converter is used because all keys were strings. This makes them symbols
     # and lowercases them all
-    @file = CSV.open(filename, :headers => true, :header_converters => :symbol)
+    options = {:headers => true, :header_converters => :symbol}
+    @file = CSV.open(filename, options)
     # @file.each do |line|
     #   puts line.inspect
     # end
-  end  
+  end 
+
+  def attendees(&block)
+    @file.each do |line|
+      block.call(line)
+    end
+
+    # same as above
+    # @file.each(&block)
+  end 
 
   def print_names
     puts "Printing First and Last Names"
@@ -29,13 +39,11 @@ class EventManager
     # get the last night
     # print them
 
-    @file.each do |line|
-
-      #prints every line
-      #line.inspect
-      
-      puts [line[:first_name], line[:last_name]].join(" ")
-    end  
+    #prints every line
+    #line.inspect   
+    attendees do |attendee|
+      puts [attendee[:first_name], attendee[:last_name]].join(" ")  
+    end
   end
 
   def clean_phone_number(phone_number)
