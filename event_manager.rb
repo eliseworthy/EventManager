@@ -1,6 +1,9 @@
 # Dependencies
+$LOAD_PATH << './'
+#load things in the current directory with ./
 require 'csv'
 require 'sunlight'
+require 'attendee'
 
 # Class Definition
 
@@ -25,8 +28,10 @@ class EventManager
 
   def attendees(&block)
     @file.rewind
+
     @file.each do |line|
-      block.call(line)
+      attendee = Attendee.new(line)
+      block.call(attendee)
     end
     # same as above
     # @file.each(&block)
@@ -42,7 +47,7 @@ class EventManager
     #prints every line
     #line.inspect   
     attendees do |attendee|
-      puts [attendee[:first_name], attendee[:last_name]].join(" ")  
+      puts attendee.full_name
     end
   end
 
@@ -62,8 +67,8 @@ class EventManager
   def print_numbers
     puts "printing your numbers"
     
-    attendees do |attendee|
-      puts clean_phone_number(attendee[:homephone])
+    @file.each do |line|
+      puts clean_phone_number(line[:homephone])
     end  
   end 
 
