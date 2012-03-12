@@ -9,4 +9,8 @@ class Attendee < OpenStruct
   def full_name
     [first_name, last_name].join(" ") 
   end  
+
+  def zipcode
+    super.to_s.rjust(5, '0')
+  end
 end

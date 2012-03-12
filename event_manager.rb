@@ -19,37 +19,12 @@ class EventManager
   def initialize(filename, options = CSV_OPTIONS)
     puts "EventManager Initialized!"
 
-    # header converter is used because all keys were strings. This makes them symbols
-    # and lowercases them all
-    file = CSV.open(filename, options)
-    # @file.each do |line|
-    #   puts line.inspect
-    # end
-
-    load_attendees(file)
-    #if there's no . after a method, it's implcitly called on itself
+    load_attendees(CSV.open(filename, options))
   end 
-
-  # def attendees(&block)
-  #   @file.rewind
-
-  #   @file.each do |line|
-  #     attendee = Attendee.new(line)
-  #     block.call(attendee)
-  #   end
-  #   # same as above
-  #   # @file.each(&block)
-  # end 
 
   def print_names
     puts "Printing First and Last Names"
-  # go through each line and...
-    # get the first name 
-    # get the last night
-    # print them
-
-    #prints every line
-    #line.inspect   
+ 
     attendees.each do |attendee|
       puts attendee.full_name
     end
@@ -82,27 +57,11 @@ class EventManager
     end  
   end 
 
-  def clean_zip(zip)
-    #read the zip
-     #if five digits
-       #print zip
-     #else less than 5 digits
-       #add zeros to the front until 5 digits
-    if zip.nil?
-      INVALID_ZIP  
-    else 
-      while zip.length < 5
-        zip = '0' + zip
-      end 
-      zip
-    end     
-  end  
-
   def print_zips
     puts "printing the zips"
     
-    @file.each do |line|
-      puts clean_zip(line[:zipcode])
+    attendees.each do |attendee|
+      puts attendee.zipcode
     end  
   end 
 
@@ -245,7 +204,4 @@ end
 # Script
 em = EventManager.new("cleaned_attendees.csv")
 #em.output_data("cleaned_attendees.csv")
-em.print_numbers
-#you can only run this once without @file.rewind since it goes through 
-#all the elements, so there are no new elements to run through, 
-em.print_names
+em.print_zips
