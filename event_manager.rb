@@ -15,18 +15,6 @@ class EventManager
 
   attr_accessor :attendees
 
-  def attendees
-    @attendees.each do |attendee|
-      yield attendee if block_given?
-    end
-  end
-
-  def attendees(&block)
-    @attendees.each do |attendee|
-      block.call(attendee) unless block.nil?
-    end
-  end
-
   def initialize(filename)
     puts "EventManager Initialized!"
 
@@ -69,7 +57,7 @@ class EventManager
 
     #prints every line
     #line.inspect   
-    attendees do |attendee|
+    attendees.each do |attendee|
       puts attendee.full_name
     end
   end
@@ -90,7 +78,7 @@ class EventManager
   def print_numbers
     puts "printing your numbers"
     
-    attendees do |attendee|
+    attendees.each do |attendee|
       puts clean_phone_number(attendee.homephone)
     end  
   end 
