@@ -30,39 +30,29 @@ class EventManager
     end
   end
 
-  def clean_phone_number(phone_number)
-    #phone_number = phone_number.delete(" ,().-")
-    phone_number = phone_number.scan(/\d/).join
-
-    if phone_number.length == 10
-      phone_number
-    elsif phone_number.length == 11 && phone_number.start_with?("1")
-      phone_number[1..-1]
-    else
-      INVALID_PHONE
-    end
-  end  
-
   def print_numbers
     puts "printing your numbers"
     
     attendees.each do |attendee|
-      puts clean_phone_number(attendee.homephone)
+      puts attendee.phone_number
     end  
   end 
 
   def print_names_with_numbers
-    @file.each do |line|     
-      puts [line[:first_name], line[:last_name], clean_phone_number(line[:homephone])].join(" ")
+    attendees.each do |attendee|     
+      puts [attendee.first_name, attendee.last_name, attendee.phone_number].join(" ")
     end  
   end 
 
   def print_zips
     puts "printing the zips"
     
-    Zipcode.clean(super)
-    end  
+    attendees.each do |attendee|
+      puts attendee.zipcode
+    end
   end 
+
+  #methods below haven't been refactored
 
   def output_data(filename)
     output = CSV.open(filename, "w")
@@ -203,4 +193,4 @@ end
 # Script
 em = EventManager.new("cleaned_attendees.csv")
 #em.output_data("cleaned_attendees.csv")
-em.print_zips
+em.print_names_with_numbers
