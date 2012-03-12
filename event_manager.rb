@@ -13,6 +13,19 @@ class EventManager
 
   Sunlight::Base.api_key = "e179a6973728c4dd3fb1204283aaccb5"
 
+  attr_accessor :attendees
+
+  def attendees
+    @attendees.each do |attendee|
+      yield attendee if block_given?
+    end
+  end
+
+  def attendees(&block)
+    @attendees.each do |attendee|
+      block.call(attendee) unless block.nil?
+    end
+  end
 
   def initialize(filename)
     puts "EventManager Initialized!"
@@ -20,22 +33,32 @@ class EventManager
     # header converter is used because all keys were strings. This makes them symbols
     # and lowercases them all
     options = {:headers => true, :header_converters => :symbol}
-    @file = CSV.open(filename, options)
+    file = CSV.open(filename, options)
     # @file.each do |line|
     #   puts line.inspect
     # end
+
+    load_attendees(file)
+    #if there's no . after a method, it's implcitly called on itself
   end 
 
-  def attendees(&block)
-    @file.rewind
+  # def attendees(&block)
+  #   @file.rewind
 
-    @file.each do |line|
-      attendee = Attendee.new(line)
-      block.call(attendee)
-    end
-    # same as above
-    # @file.each(&block)
-  end 
+  #   @file.each do |line|
+  #     attendee = Attendee.new(line)
+  #     block.call(attendee)
+  #   end
+  #   # same as above
+  #   # @file.each(&block)
+  # end 
+
+  def load_attendees(file)
+    file.rewind
+    # self represents the object we're inside 
+    # we need to load attendees on an instance of event_manager
+    self.attendees = file.collect { |line| Attendee.new(line) }
+  end
 
   def print_names
     puts "Printing First and Last Names"
@@ -67,8 +90,8 @@ class EventManager
   def print_numbers
     puts "printing your numbers"
     
-    @file.each do |line|
-      puts clean_phone_number(line[:homephone])
+    attendees do |attendee|
+      puts clean_phone_number(attendee.homephone)
     end  
   end 
 
