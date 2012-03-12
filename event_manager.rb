@@ -60,8 +60,7 @@ class EventManager
   def print_zips
     puts "printing the zips"
     
-    attendees.each do |attendee|
-      puts attendee.zipcode
+    Zipcode.clean(super)
     end  
   end 
 
